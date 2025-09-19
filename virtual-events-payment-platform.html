@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventPay - Plataforma de Pagos para Eventos Virtuales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .event-header {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            position: relative;
+        }
+
+        .event-date {
+            background: white;
+            color: #667eea;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .event-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .event-type {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .event-body {
+            padding: 20px;
+        }
+
+        .event-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .event-price {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .buy-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .buy-button:hover {
+            transform: scale(1.05);
+        }
+
+        .buy-button:active {
+            transform: scale(0.98);
+        }
+
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .payment-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .wallet-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .wallet-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .wallet-address {
+            color: #333;
+            font-weight: bold;
+            word-break: break-all;
+            font-size: 0.9em;
+        }
+
+        .payment-status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .payment-status.processing {
+            background: #fff3cd;
+            color: #856404;
+            display: block;
+        }
+
+        .payment-status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .payment-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .confirm-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .cancel-button {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .modal-button:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .modal-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loader {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .admin-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .admin-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .registrations-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .registrations-table th,
+        .registrations-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .registrations-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 EventPay</h1>
+            <p>Plataforma de Pagos para Eventos Virtuales con Open Payments</p>
+        </div>
+
+        <div class="events-grid" id="eventsGrid">
+            <!-- Los eventos se cargarán aquí -->
+        </div>
+
+        <div class="admin-panel">
+            <h2 class="admin-title">📊 Panel de Registros</h2>
+            <table class="registrations-table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Evento</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="registrationsTable">
+                    <!-- Los registros se mostrarán aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Pago -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Procesar Pago</h2>
+                <p id="eventDetails"></p>
+            </div>
+
+            <div class="payment-status" id="paymentStatus">
+                <div class="loader"></div>
+                <p id="statusMessage">Procesando pago...</p>
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="emailInput" required placeholder="tu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" class="form-input" id="nameInput" required placeholder="Juan Pérez">
+                </div>
+
+                <div class="wallet-info">
+                    <div class="wallet-label">Tu Wallet Address (Pagador):</div>
+                    <input type="text" class="form-input" id="payerWallet" 
+                           placeholder="https://wallet.interledger-test.dev/usuario"
+                           value="">
+                </div>
+
+                <div class="wallet-info">
+                    <div class="wallet-label">Wallet del Evento (Receptor):</div>
+                    <div class="wallet-address" id="receiverWallet"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Monto a Pagar:</label>
+                    <div style="font-size: 1.5em; color: #667eea; font-weight: bold;" id="amountDisplay"></div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="modal-button cancel-button" onclick="closeModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="modal-button confirm-button" id="confirmButton">
+                        Confirmar Pago
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Open Payments
+        const OPEN_PAYMENTS_CONFIG = {
+            // Wallet addresses de prueba - Configura las tuyas aquí
+            RECEIVER_WALLET: 'https://wallet.interledger-test.dev/eventos', // Wallet que recibe pagos
+            DEFAULT_PAYER_WALLET: 'https://wallet.interledger-test.dev/usuario', // Wallet del pagador
+            
+            // Configuración de la API de Open Payments
+            API_BASE_URL: 'https://wallet.interledger-test.dev',
+            GRANT_REQUEST_URL: 'https://auth.interledger-test.dev',
+        };
+
+        // Base de datos simulada (en producción usar una base de datos real)
+        let registrations = JSON.parse(localStorage.getItem('eventRegistrations') || '[]');
+        let currentEvent = null;
+
+        // Datos de eventos virtuales
+        const events = [
+            {
+                id: 1,
+                title: 'Workshop de JavaScript Avanzado',
+                type: 'Taller Técnico',
+                date: '25 Sep 2025',
+                time: '18:00 UTC',
+                description: 'Aprende técnicas avanzadas de JavaScript, patrones de diseño y optimización.',
+                price: 49.99,
+                currency: 'USD',
+                receiverWallet: OPEN_PAYMENTS_CONFIG.RECEIVER_WALLET
+            },
+            {
+                id: 2,
+                title: 'Conferencia de Blockchain',
+                type: 'Conferencia',
+                date: '28 Sep 2025',
+                time: '20:00 UTC',
+                description: 'Explorando el futuro de las finanzas descentralizadas y Web3.',
+                price: 29.99,
+                currency: 'USD',
+                receiverWallet: OPEN_PAYMENTS_CONFIG.RECEIVER_WALLET
+            },
+            {
+                id: 3,
+                title: 'Masterclass de Marketing Digital',
+                type: 'Masterclass',
+                date: '02 Oct 2025',
+                time: '19:00 UTC',
+                description: 'Estrategias efectivas de marketing digital para 2025.',
+                price: 39.99,
+                currency: 'USD',
+                receiverWallet: OPEN_PAYMENTS_CONFIG.RECEIVER_WALLET
+            },
+            {
+                id: 4,
+                title: 'Seminario de IA y Machine Learning',
+                type: 'Seminario',
+                date: '05 Oct 2025',
+                time: '17:00 UTC',
+                description: 'Introducción práctica a la inteligencia artificial y aprendizaje automático.',
+                price: 59.99,
+                currency: 'USD',
+                receiverWallet: OPEN_PAYMENTS_CONFIG.RECEIVER_WALLET
+            },
+            {
+                id: 5,
+                title: 'Taller de Diseño UX/UI',
+                type: 'Taller Creativo',
+                date: '10 Oct 2025',
+                time: '16:00 UTC',
+                description: 'Principios de diseño centrado en el usuario y prototipado.',
+                price: 44.99,
+                currency: 'USD',
+                receiverWallet: OPEN_PAYMENTS_CONFIG.RECEIVER_WALLET
+            },
+            {
+                id: 6,
+                title: 'Webinar de Ciberseguridad',
+                type: 'Webinar',
+                date: '12 Oct 2025',
+                time: '21:00 UTC',
+                description: 'Protege tu empresa de las amenazas digitales modernas.',
+                price: 19.99,
+                currency: 'USD',
+                receiverWallet: OPEN_PAYMENTS_CONFIG.RECEIVER_WALLET
+            }
+        ];
+
+        // Renderizar eventos
+        function renderEvents() {
+            const eventsGrid = document.getElementById('eventsGrid');
+            eventsGrid.innerHTML = events.map(event => `
+                <div class="event-card">
+                    <div class="event-header">
+                        <div class="event-date">${event.date} - ${event.time}</div>
+                        <h3 class="event-title">${event.title}</h3>
+                        <p class="event-type">${event.type}</p>
+                    </div>
+                    <div class="event-body">
+                        <p class="event-description">${event.description}</p>
+                        <div class="event-price">$${event.price} ${event.currency}</div>
+                        <button class="buy-button" onclick="openPaymentModal(${event.id})">
+                            Comprar Ticket
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Abrir modal de pago
+        function openPaymentModal(eventId) {
+            currentEvent = events.find(e => e.id === eventId);
+            if (!currentEvent) return;
+
+            document.getElementById('paymentModal').classList.add('active');
+            document.getElementById('eventDetails').textContent = `${currentEvent.title} - ${currentEvent.date}`;
+            document.getElementById('receiverWallet').textContent = currentEvent.receiverWallet;
+            document.getElementById('amountDisplay').textContent = `$${currentEvent.price} ${currentEvent.currency}`;
+            document.getElementById('payerWallet').value = OPEN_PAYMENTS_CONFIG.DEFAULT_PAYER_WALLET;
+            
+            // Reset form
+            document.getElementById('paymentForm').reset();
+            document.getElementById('payerWallet').value = OPEN_PAYMENTS_CONFIG.DEFAULT_PAYER_WALLET;
+            document.getElementById('paymentStatus').className = 'payment-status';
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            currentEvent = null;
+        }
+
+        // Simular integración con Open Payments API
+        async function processOpenPayment(paymentData) {
+            // En una implementación real, aquí se haría:
+            // 1. Solicitar un grant token para el pago
+            // 2. Crear una sesión de pago interactiva
+            // 3. Ejecutar la transferencia de fondos
+            
+            try {
+                // Simulación de llamada a la API de Open Payments
+                // En producción, esto sería una llamada real a la API
+                
+                // Paso 1: Solicitar Grant para el pago
+                const grantRequest = {
+                    access_token: {
+                        access: [{
+                            type: 'outgoing-payment',
+                            actions: ['create', 'read'],
+                            identifier: paymentData.payerWallet,
+                            limits: {
+                                sendAmount: {
+                                    value: Math.round(paymentData.amount * 100), // Convertir a centavos
+                                    assetCode: paymentData.currency,
+                                    assetScale: 2
+                                }
+                            }
+                        }]
+                    },
+                    interact: {
+                        start: ['redirect'],
+                        finish: {
+                            method: 'redirect',
+                            uri: window.location.href,
+                            nonce: generateNonce()
+                        }
+                    }
+                };
+
+                // Simulación de respuesta exitosa
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Paso 2: Crear el pago saliente
+                const outgoingPayment = {
+                    walletAddress: paymentData.payerWallet,
+                    quoteId: generatePaymentId(),
+                    metadata: {
+                        description: `Pago para: ${paymentData.eventTitle}`,
+                        externalRef: paymentData.registrationId
+                    }
+                };
+
+                // Paso 3: Confirmar la transferencia
+                const paymentResult = {
+                    id: generatePaymentId(),
+                    walletAddress: paymentData.receiverWallet,
+                    receiveAmount: {
+                        value: Math.round(paymentData.amount * 100),
+                        assetCode: paymentData.currency,
+                        assetScale: 2
+                    },
+                    createdAt: new Date().toISOString(),
+                    completedAt: new Date().toISOString(),
+                    metadata: {
+                        eventId: paymentData.eventId,
+                        email: paymentData.email
+                    }
+                };
+
+                return {
+                    success: true,
+                    paymentId: paymentResult.id,
+                    timestamp: paymentResult.completedAt
+                };
+                
+            } catch (error) {
+                console.error('Error en Open Payments:', error);
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('emailInput').value;
+            const name = document.getElementById('nameInput').value;
+            const payerWallet = document.getElementById('payerWallet').value;
+            
+            if (!currentEvent || !email || !name || !payerWallet) return;
+            
+            // Mostrar estado de procesamiento
+            const statusDiv = document.getElementById('paymentStatus');
+            const statusMessage = document.getElementById('statusMessage');
+            statusDiv.className = 'payment-status processing';
+            statusMessage.innerHTML = '<div class="loader"></div>Conectando con Open Payments...';
+            
+            // Desactivar botones
+            document.getElementById('confirmButton').disabled = true;
+            
+            try {
+                // Crear registro
+                const registration = {
+                    id: generatePaymentId(),
+                    email: email,
+                    name: name,
+                    eventId: currentEvent.id,
+                    eventTitle: currentEvent.title,
+                    eventDate: currentEvent.date,
+                    amount: currentEvent.price,
+                    currency: currentEvent.currency,
+                    payerWallet: payerWallet,
+                    receiverWallet: currentEvent.receiverWallet,
+                    timestamp: new Date().toISOString(),
+                    status: 'pending'
+                };
+                
+                // Procesar pago con Open Payments
+                statusMessage.textContent = 'Autorizando transacción...';
+                
+                const paymentResult = await processOpenPayment({
+                    payerWallet: payerWallet,
+                    receiverWallet: currentEvent.receiverWallet,
+                    amount: currentEvent.price,
+                    currency: currentEvent.currency,
+                    eventId: currentEvent.id,
+                    eventTitle: currentEvent.title,
+                    email: email,
+                    registrationId: registration.id
+                });
+                
+                if (paymentResult.success) {
+                    // Actualizar registro con éxito
+                    registration.status = 'completed';
+                    registration.paymentId = paymentResult.paymentId;
+                    registration.completedAt = paymentResult.timestamp;
+                    
+                    // Guardar en base de datos local
+                    registrations.push(registration);
+                    localStorage.setItem('eventRegistrations', JSON.stringify(registrations));
+                    
+                    // Mostrar éxito
+                    statusDiv.className = 'payment-status success';
+                    statusMessage.textContent = '¡Pago completado exitosamente! Tu ticket ha sido enviado a tu email.';
+                    
+                    // Actualizar tabla de registros
+                    updateRegistrationsTable();
+                    
+                    // Cerrar modal después de 3 segundos
+                    setTimeout(() => {
+                        closeModal();
+                    }, 3000);
+                    
+                } else {
+                    throw new Error(paymentResult.error || 'Error al procesar el pago');
+                }
+                
+            } catch (error) {
+                // Mostrar error
+                statusDiv.className = 'payment-status error';
+                statusMessage.textContent = `Error: ${error.message}. Por favor intenta nuevamente.`;
+                
+                // Reactivar botones
+                document.getElementById('confirmButton').disabled = false;
+            }
+        });
+
+        // Actualizar tabla de registros
+        function updateRegistrationsTable() {
+            const tbody = document.getElementById('registrationsTable');
+            const sortedRegistrations = [...registrations].reverse(); // Mostrar los más recientes primero
+            
+            tbody.innerHTML = sortedRegistrations.map(reg => `
+                <tr>
+                    <td>${reg.email}</td>
+                    <td>${reg.eventTitle}</td>
+                    <td>${new Date(reg.timestamp).toLocaleDateString()}</td>
+                    <td>$${reg.amount} ${reg.currency}</td>
+                    <td>
+                        <span class="status-badge status-${reg.status}">
+                            ${reg.status === 'completed' ? 'Completado' : 'Pendiente'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" style="text-align: center; color: #999;">No hay registros aún</td></tr>';
+        }
+
+        // Generar ID único para pagos
+        function generatePaymentId() {
+            return 'pay_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Generar nonce para autenticación
+        function generateNonce() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', () => {
+            renderEvents();
+            updateRegistrationsTable();
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('paymentModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('paymentModal')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

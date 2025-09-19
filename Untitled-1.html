@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayLink - Pagos Interledger Profesional</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#667eea">
+    <!-- PWA Meta Tags para funcionar como app móvil -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PayLink">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <!-- PANTALLA DE CARGA INICIAL -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">💳</div>
+            <div class="loading-text">Conectando a Interledger...</div>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE LOGIN -->
+    <div id="loginScreen" class="screen login-screen">
+        <!-- ... (código existente sin cambios) ... -->
+    </div>
+
+    <!-- PANTALLA PRINCIPAL DE LA APP -->
+    <div id="mainApp" class="screen main-app" style="display: none;">
+        <!-- ... (código existente sin cambios) ... -->
+    </div>
+
+    <!-- MODALES -->
+    <!-- ... (código existente sin cambios) ... -->
+
+    <!-- Scripts principales -->
+    <script src="config.js"></script>
+    <script src="interledger-api.js"></script>
+    <script src="payment-handler.js"></script>
+    <script src="ui-controller.js"></script>
+    <script src="event-manager.js"></script>
+    <script src="history-manager.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

@@ -14,6 +14,132 @@
 </head>
 <body>
     <!-- PANTALLA DE CARGA INICIAL -->
+     <script>
+// Variables globales
+let ilpApi, paymentHandler, uiController;
+
+// Función para inicializar la aplicación
+function initApp() {
+    // Simular conexión a Interledger (esto se reemplazará con la implementación real)
+    setTimeout(() => {
+        hideLoadingScreen();
+        showLoginScreen();
+    }, 2000); // 2 segundos de pantalla de carga
+    
+    // Verificar si hay sesión guardada
+    const savedSession = localStorage.getItem('paylink_session');
+    if (savedSession) {
+        const session = JSON.parse(savedSession);
+        // autoLogin(session); // Descomentar cuando esté implementado
+    }
+}
+
+// Funciones de transición entre pantallas
+function hideLoadingScreen() {
+    document.getElementById('loadingScreen').style.display = 'none';
+}
+
+function showLoginScreen() {
+    document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function showMainApp(userData) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    
+    // Actualizar datos del usuario
+    if (userData) {
+        document.getElementById('userName').textContent = userData.name || 'Usuario';
+        document.getElementById('userIlpAddress').value = userData.ilpAddress || '$demo.wallet';
+        document.getElementById('mainBalance').textContent = `$${(userData.balance || 0).toFixed(2)}`;
+    }
+}
+
+// Funciones de login (simuladas por ahora)
+function loginWithWallet() {
+    // Mostrar formulario de conexión manual
+    document.getElementById('manualConnectForm').style.display = 'block';
+}
+
+function createWallet() {
+    alert('Función de crear billetera será implementada');
+}
+
+function demoLogin() {
+    // Simular conexión exitosa
+    showMainApp({
+        name: 'Usuario Demo',
+        ilpAddress: '$demo.wallet/usuario',
+        balance: 125.50
+    });
+}
+
+function connectManually() {
+    const walletUrl = document.getElementById('walletUrl').value;
+    const accessToken = document.getElementById('accessToken').value;
+    
+    if (walletUrl && accessToken) {
+        // Simular conexión exitosa
+        showMainApp({
+            name: 'Usuario Conectado',
+            ilpAddress: walletUrl,
+            balance: 250.75
+        });
+    } else {
+        alert('Por favor, complete todos los campos');
+    }
+}
+
+function cancelManualConnect() {
+    document.getElementById('manualConnectForm').style.display = 'none';
+}
+
+// Funciones de navegación
+function showSection(sectionId) {
+    // Ocultar todas las secciones
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Desactivar todos los botones de navegación
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Mostrar la sección seleccionada
+    document.getElementById(sectionId + 'Section').classList.add('active');
+    
+    // Activar el botón correspondiente
+    document.querySelector(`.nav-btn[onclick="showSection('${sectionId}')"]`).classList.add('active');
+}
+
+// Funciones de modal
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function showReceiveModal() {
+    alert('Modal de recibir pago será implementado');
+}
+
+function showSendModal() {
+    alert('Modal de enviar pago será implementado');
+}
+
+function copyAddress() {
+    const ilpAddress = document.getElementById('userIlpAddress');
+    ilpAddress.select();
+    document.execCommand('copy');
+    alert('Dirección copiada al portapapeles');
+}
+
+function refreshBalance() {
+    alert('Saldo actualizado');
+}
+
+// Inicializar la aplicación cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', initApp);
+</script>
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
             <div class="loading-logo">💳</div>
