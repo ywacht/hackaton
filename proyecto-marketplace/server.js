@@ -25,7 +25,7 @@ const config = {
   port: process.env.PORT || 3002,
   // Merchant wallet (recibe los pagos)
   walletAddressUrl: process.env.WALLET_ADDRESS_URL || 'https://ilp.interledger-test.dev/carterah',
-  privateKeyPath: process.env.PRIVATE_KEY_PATH || './private.key',
+  privateKey: process.env.PRIVATE_KEY_PATH || './private.key',
   keyId: process.env.KEY_ID || '67b0ec64-9d43-4f9d-bd94-eddaaedc75fe',
   appUrl: process.env.APP_URL || 'http://localhost:3002',
   // Cliente wallet por defecto (para demo)
@@ -71,10 +71,8 @@ async function initializeClient() {
     authenticatedClient = await createAuthenticatedClient({
       walletAddressUrl: config.walletAddressUrl,
       // privateKey: privateKey.trim(),
-      privateKey: "./private.key",
-      keyId: config.keyId,
-      validateResponses: false,
-      requestTimeoutMs: 60000
+      privateKey: "private.key",
+      keyId: config.keyId
     })
     
     console.log('✅ Cliente autenticado inicializado correctamente')
