@@ -70,7 +70,8 @@ async function initializeClient() {
     
     authenticatedClient = await createAuthenticatedClient({
       walletAddressUrl: config.walletAddressUrl,
-      privateKey: privateKey.trim(),
+      // privateKey: privateKey.trim(),
+      privateKey: "./private.key",
       keyId: config.keyId,
       validateResponses: false,
       requestTimeoutMs: 60000
