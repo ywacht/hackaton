@@ -74,61 +74,6 @@
             100% { opacity: 1; }
         }
 
-        .payment-flow {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .flow-title {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: #333;
-            text-align: center;
-        }
-
-        .flow-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .step {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            position: relative;
-        }
-
-        .step-number {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin: 0 auto 15px;
-        }
-
-        .step-title {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .step-description {
-            font-size: 0.9em;
-            color: #666;
-            line-height: 1.4;
-        }
-
         .wallet-input {
             background: white;
             border-radius: 15px;
@@ -192,12 +137,10 @@
         .event-product:hover {
             transform: translateY(-10px);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-            border-color: #667eea;
         }
 
         .event-header {
             height: 180px;
-            background: linear-gradient(45deg, #ff6b6b, #feca57);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -256,13 +199,6 @@
             margin-bottom: 5px;
         }
 
-        .merchant-wallet {
-            font-family: 'Courier New', monospace;
-            font-size: 0.8em;
-            color: #667eea;
-            word-break: break-all;
-        }
-
         .btn {
             width: 100%;
             padding: 15px;
@@ -272,8 +208,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
         .btn-primary {
@@ -286,13 +220,10 @@
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .loading-btn {
-            background: #ccc !important;
-            cursor: not-allowed !important;
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .payment-modal {
@@ -330,15 +261,11 @@
             }
         }
 
-        .modal-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
         .modal-title {
             font-size: 1.5em;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .payment-summary {
@@ -361,23 +288,31 @@
             color: #333;
         }
 
-        .access-info {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            padding: 20px;
+        .auth-redirect {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
             border-radius: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
-        .access-link {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 15px;
-            word-break: break-all;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .close-modal {
@@ -391,58 +326,38 @@
             color: #999;
         }
 
-        .implementation-notes {
-            background: white;
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
             border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .notes-title {
-            font-size: 1.5em;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .code-block {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            overflow-x: auto;
-            line-height: 1.5;
-        }
-
-        .highlight {
-            background: rgba(102, 126, 234, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #667eea;
+            font-size: 0.85em;
             font-weight: 600;
+            margin-left: 10px;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .events-marketplace {
-                grid-template-columns: 1fr;
-            }
-            
-            .flow-steps {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-            }
+        .status-connected {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-disconnected {
+            background: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
@@ -452,36 +367,9 @@
         <div class="header">
             <div class="logo">🎫 PayLink</div>
             <div class="subtitle">Marketplace de Eventos con Open Payments</div>
-            <div class="api-status">
+            <div class="api-status" id="apiStatus">
                 <span class="status-dot"></span>
-                Conectado a Open Payments API
-            </div>
-        </div>
-
-        <!-- Flujo de Pago -->
-        <div class="payment-flow">
-            <div class="flow-title">🔄 Cómo Funciona el Flujo de Pago</div>
-            <div class="flow-steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-title">Cliente Selecciona</div>
-                    <div class="step-description">El usuario elige un evento y hace clic en "Comprar"</div>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-title">Open Payments</div>
-                    <div class="step-description">Se crea un Payment Request usando la API</div>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-title">Transferencia</div>
-                    <div class="step-description">El dinero pasa del cliente al organizador</div>
-                </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-title">Acceso</div>
-                    <div class="step-description">Se genera y entrega el enlace de acceso</div>
-                </div>
+                <span id="statusText">Verificando conexión...</span>
             </div>
         </div>
 
@@ -494,9 +382,9 @@
                        id="clientWallet" 
                        class="form-control" 
                        placeholder="Ingresa tu wallet address"
-                       value="">
+                       value="https://ilp.interledger-test.dev/alice">
                 <div class="wallet-example">
-                    Ejemplo: https://wallet.interledger-test.dev/alice
+                    Ejemplo: https://ilp.interledger-test.dev/tu-usuario
                 </div>
             </div>
         </div>
@@ -504,7 +392,7 @@
         <!-- Marketplace de Eventos -->
         <div class="events-marketplace">
             <!-- Evento 1: Concierto -->
-            <div class="event-product" style="border-color: #ff6b6b;">
+            <div class="event-product">
                 <div class="event-header" style="background: linear-gradient(45deg, #ff6b6b, #feca57);">
                     🎵
                     <div class="event-price-tag">$25.00</div>
@@ -516,20 +404,19 @@
                     </div>
                     <div class="event-details">
                         <span>📅 25 Sep, 8:00 PM</span>
-                        <span>⏱️ 2 horas</span>
+                        <span>⏱ 2 horas</span>
                     </div>
                     <div class="merchant-info">
                         <div class="merchant-name">🎼 Jazz Productions Inc.</div>
-                        <div class="merchant-wallet">https://wallet.interledger-test.dev/jazz-merchant</div>
                     </div>
-                    <button class="btn btn-primary" onclick="purchaseEvent('jazz-concert', 25, 'Jazz Night Virtual Concert', 'https://wallet.interledger-test.dev/jazz-merchant')">
+                    <button class="btn btn-primary" onclick="purchaseEvent('jazz-concert', 25, 'Jazz Night Virtual Concert')">
                         🛒 Comprar Entrada - $25.00
                     </button>
                 </div>
             </div>
 
             <!-- Evento 2: Tech Conference -->
-            <div class="event-product" style="border-color: #667eea;">
+            <div class="event-product">
                 <div class="event-header" style="background: linear-gradient(45deg, #667eea, #764ba2);">
                     💻
                     <div class="event-price-tag">$75.00</div>
@@ -541,20 +428,19 @@
                     </div>
                     <div class="event-details">
                         <span>📅 30 Sep, 10:00 AM</span>
-                        <span>⏱️ 6 horas</span>
+                        <span>⏱ 6 horas</span>
                     </div>
                     <div class="merchant-info">
                         <div class="merchant-name">🔗 Blockchain Events Ltd.</div>
-                        <div class="merchant-wallet">https://wallet.interledger-test.dev/blockchain-events</div>
                     </div>
-                    <button class="btn btn-primary" onclick="purchaseEvent('tech-summit', 75, 'Blockchain Tech Summit 2024', 'https://wallet.interledger-test.dev/blockchain-events')">
+                    <button class="btn btn-primary" onclick="purchaseEvent('tech-summit', 75, 'Blockchain Tech Summit 2024')">
                         🛒 Comprar Entrada - $75.00
                     </button>
                 </div>
             </div>
 
             <!-- Evento 3: Art Workshop -->
-            <div class="event-product" style="border-color: #f093fb;">
+            <div class="event-product">
                 <div class="event-header" style="background: linear-gradient(45deg, #f093fb, #f5576c);">
                     🎨
                     <div class="event-price-tag">$40.00</div>
@@ -566,139 +452,15 @@
                     </div>
                     <div class="event-details">
                         <span>📅 5 Oct, 3:00 PM</span>
-                        <span>⏱️ 3 horas</span>
+                        <span>⏱ 3 horas</span>
                     </div>
                     <div class="merchant-info">
                         <div class="merchant-name">🎭 Creative Studio Pro</div>
-                        <div class="merchant-wallet">https://wallet.interledger-test.dev/creative-studio</div>
                     </div>
-                    <button class="btn btn-primary" onclick="purchaseEvent('art-workshop', 40, 'Digital Art Masterclass', 'https://wallet.interledger-test.dev/creative-studio')">
+                    <button class="btn btn-primary" onclick="purchaseEvent('art-workshop', 40, 'Digital Art Masterclass')">
                         🛒 Comprar Entrada - $40.00
                     </button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Notas de Implementación -->
-        <div class="implementation-notes">
-            <div class="notes-title">📋 Lo Que Necesitas Implementar</div>
-            
-            <h4>1. 🔑 Configuración de Open Payments</h4>
-            <div class="code-block">
-// Configuración base para Open Payments API
-const OPEN_PAYMENTS_CONFIG = {
-    apiUrl: 'https://wallet.interledger-test.dev', // URL base de Open Payments
-    clientWallet: '', // Se obtiene del input del usuario
-    merchantWallets: {
-        'jazz-concert': 'https://wallet.interledger-test.dev/jazz-merchant',
-        'tech-summit': 'https://wallet.interledger-test.dev/blockchain-events',
-        'art-workshop': 'https://wallet.interledger-test.dev/creative-studio'
-    }
-};
-            </div>
-
-            <h4>2. 💸 Función para Crear Payment Request</h4>
-            <div class="code-block">
-async function createPaymentRequest(merchantWallet, amount, description) {
-    try {
-        // Paso 1: Crear Incoming Payment (lado del merchant)
-        const incomingPaymentResponse = await fetch(`${merchantWallet}/incoming-payments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer YOUR_ACCESS_TOKEN' // Token del merchant
-            },
-            body: JSON.stringify({
-                walletAddress: merchantWallet,
-                incomingAmount: {
-                    value: (amount * 100).toString(), // Convertir a centavos
-                    assetCode: 'USD',
-                    assetScale: 2
-                },
-                description: description
-            })
-        });
-        
-        const incomingPayment = await incomingPaymentResponse.json();
-        
-        // Paso 2: Crear Outgoing Payment (lado del cliente)
-        return await createOutgoingPayment(incomingPayment.id, amount);
-        
-    } catch (error) {
-        console.error('Error creando payment request:', error);
-        throw error;
-    }
-}
-            </div>
-
-            <h4>3. 🚀 Ejecutar el Pago</h4>
-            <div class="code-block">
-async function executePayment(clientWallet, incomingPaymentId, amount) {
-    const response = await fetch(`${clientWallet}/outgoing-payments`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer CLIENT_ACCESS_TOKEN' // Token del cliente
-        },
-        body: JSON.stringify({
-            walletAddress: clientWallet,
-            receiver: incomingPaymentId, // URL del incoming payment
-            sendAmount: {
-                value: (amount * 100).toString(),
-                assetCode: 'USD',
-                assetScale: 2
-            }
-        })
-    });
-    
-    return await response.json();
-}
-            </div>
-
-            <h4>4. 🎫 Generar Acceso al Evento</h4>
-            <div class="code-block">
-function generateEventAccess(eventId, paymentId) {
-    // Crear token único para el evento
-    const accessToken = crypto.randomUUID();
-    const expirationTime = Date.now() + (24 * 60 * 60 * 1000); // 24 horas
-    
-    // Guardar en tu base de datos
-    const accessData = {
-        eventId: eventId,
-        paymentId: paymentId,
-        accessToken: accessToken,
-        expiresAt: expirationTime,
-        status: 'active'
-    };
-    
-    // Retornar enlace de acceso
-    return `https://eventos.tudominio.com/join/${eventId}?token=${accessToken}&expires=${expirationTime}`;
-}
-            </div>
-
-            <h4>5. 🔍 Verificar Estado del Pago</h4>
-            <div class="code-block">
-async function verifyPaymentStatus(paymentId, walletAddress) {
-    const response = await fetch(`${walletAddress}/outgoing-payments/${paymentId}`, {
-        headers: {
-            'Authorization': 'Bearer ACCESS_TOKEN'
-        }
-    });
-    
-    const payment = await response.json();
-    return payment.state; // 'FUNDING', 'SENDING', 'COMPLETED', 'FAILED'
-}
-            </div>
-
-            <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; margin-top: 25px;">
-                <h4 style="color: #1976d2; margin-bottom: 15px;">🎯 Puntos Clave de Implementación:</h4>
-                <ul style="color: #1565c0; line-height: 1.8;">
-                    <li><span class="highlight">Autenticación</span>: Necesitas tokens de acceso para cada wallet</li>
-                    <li><span class="highlight">Webhook</span>: Configura webhooks para recibir notificaciones de pago</li>
-                    <li><span class="highlight">Base de Datos</span>: Almacena tokens de acceso y estado de pagos</li>
-                    <li><span class="highlight">Validación</span>: Siempre verifica el estado del pago antes de dar acceso</li>
-                    <li><span class="highlight">Seguridad</span>: Los enlaces de acceso deben tener expiración</li>
-                </ul>
             </div>
         </div>
     </div>
@@ -707,52 +469,49 @@ async function verifyPaymentStatus(paymentId, walletAddress) {
     <div id="paymentModal" class="payment-modal">
         <div class="modal-content">
             <button class="close-modal" onclick="closePaymentModal()">&times;</button>
-            <div class="modal-header">
-                <div class="modal-title">💳 Procesando Pago</div>
-                <div>Transferencia vía Open Payments</div>
-            </div>
+            <div class="modal-title">💳 Procesando Pago</div>
             
-            <div class="payment-summary">
-                <div class="summary-row">
-                    <span>Evento:</span>
-                    <span id="modalEventName"></span>
-                </div>
-                <div class="summary-row">
-                    <span>Precio:</span>
-                    <span id="modalEventPrice"></span>
-                </div>
-                <div class="summary-row">
-                    <span>De:</span>
-                    <span id="modalClientWallet"></span>
-                </div>
-                <div class="summary-row">
-                    <span>Para:</span>
-                    <span id="modalMerchantWallet"></span>
-                </div>
-                <div class="summary-row">
-                    <span><strong>Total:</strong></span>
-                    <span><strong id="modalTotal"></strong></span>
-                </div>
+            <div id="paymentContent">
+                <!-- Contenido dinámico del modal -->
             </div>
-
-            <div id="paymentStatus" class="access-info" style="display: none;">
-                <div>✅ ¡Pago Completado!</div>
-                <div style="margin-top: 10px;">🎫 Enlace de acceso al evento:</div>
-                <div id="eventAccessLink" class="access-link"></div>
-            </div>
-
-            <button id="confirmPaymentBtn" class="btn btn-primary" onclick="processPayment()">
-                🚀 Confirmar Pago
-            </button>
         </div>
     </div>
 
     <script>
-        // Variables globales
+        // Configuración
+        const API_URL = 'http://localhost:3001';
         let currentPaymentData = null;
 
-        // Función principal para comprar evento
-        function purchaseEvent(eventId, price, eventName, merchantWallet) {
+        // Verificar conexión con el backend
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('apiStatus');
+                const statusText = document.getElementById('statusText');
+                
+                if (data.status === 'OK') {
+                    statusText.textContent = 'Conectado a Open Payments API';
+                    statusEl.style.background = 'rgba(40, 167, 69, 0.1)';
+                    statusEl.style.color = '#28a745';
+                } else {
+                    throw new Error('API no disponible');
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('apiStatus');
+                const statusText = document.getElementById('statusText');
+                
+                statusText.textContent = 'Desconectado - Verifica el servidor';
+                statusEl.style.background = 'rgba(220, 53, 69, 0.1)';
+                statusEl.style.color = '#dc3545';
+                
+                console.error('Error verificando API:', error);
+            }
+        }
+
+        // Función para iniciar compra
+        async function purchaseEvent(eventId, price, eventName) {
             const clientWallet = document.getElementById('clientWallet').value.trim();
             
             if (!clientWallet) {
@@ -760,402 +519,252 @@ async function verifyPaymentStatus(paymentId, walletAddress) {
                 return;
             }
 
-            // Validar formato de wallet
-            if (!clientWallet.includes('wallet.interledger-test.dev')) {
-                alert('❌ Por favor usa un wallet de https://wallet.interledger-test.dev');
-                return;
-            }
-
-            // Configurar datos del pago
             currentPaymentData = {
-                eventId: eventId,
-                eventName: eventName,
-                price: price,
-                clientWallet: clientWallet,
-                merchantWallet: merchantWallet
+                eventId,
+                eventName,
+                amount: price,
+                clientWalletAddress: clientWallet,
+                merchantId: eventId
             };
 
-            // Mostrar modal
             showPaymentModal();
+            await createPayment();
         }
 
+        // Mostrar modal
         function showPaymentModal() {
             const modal = document.getElementById('paymentModal');
-            const data = currentPaymentData;
-            
-            // Llenar datos del modal
-            document.getElementById('modalEventName').textContent = data.eventName;
-            document.getElementById('modalEventPrice').textContent = `$${data.price.toFixed(2)}`;
-            document.getElementById('modalClientWallet').textContent = data.clientWallet;
-            document.getElementById('modalMerchantWallet').textContent = data.merchantWallet;
-            document.getElementById('modalTotal').textContent = `$${data.price.toFixed(2)}`;
-            
-            // Mostrar modal
             modal.style.display = 'flex';
+            
+            // Mostrar resumen inicial
+            updateModalContent('summary');
         }
 
+        // Cerrar modal
         function closePaymentModal() {
-            document.getElementById('paymentModal').style.display = 'none';
-            document.getElementById('paymentStatus').style.display = 'none';
-            document.getElementById('confirmPaymentBtn').style.display = 'block';
+            const modal = document.getElementById('paymentModal');
+            modal.style.display = 'none';
             currentPaymentData = null;
         }
 
-        // AQUÍ ES DONDE NECESITAS IMPLEMENTAR LA LÓGICA REAL
-        async function processPayment() {
-            const button = document.getElementById('confirmPaymentBtn');
-            button.textContent = '⏳ Procesando...';
-            button.classList.add('loading-btn');
-            button.disabled = true;
+        // Actualizar contenido del modal
+        function updateModalContent(type, data = {}) {
+            const content = document.getElementById('paymentContent');
+            
+            switch(type) {
+                case 'summary':
+                    content.innerHTML = `
+                        <div class="payment-summary">
+                            <div class="summary-row">
+                                <span>Evento:</span>
+                                <span>${currentPaymentData.eventName}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Precio:</span>
+                                <span>$${currentPaymentData.amount.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tu Wallet:</span>
+                                <span style="font-size: 0.9em;">${currentPaymentData.clientWalletAddress}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span><strong>Total:</strong></span>
+                                <span><strong>$${currentPaymentData.amount.toFixed(2)}</strong></span>
+                            </div>
+                        </div>
+                        <button id="confirmBtn" class="btn btn-primary" onclick="confirmPayment()">
+                            🚀 Confirmar y Pagar
+                        </button>
+                    `;
+                    break;
+                
+                case 'processing':
+                    content.innerHTML = `
+                        <div style="text-align: center;">
+                            <div class="spinner"></div>
+                            <p>Procesando pago...</p>
+                            <p style="color: #666; font-size: 0.9em; margin-top: 10px;">
+                                ${data.message || 'Esto puede tomar unos segundos'}
+                            </p>
+                        </div>
+                    `;
+                    break;
+                
+                case 'auth':
+                    content.innerHTML = `
+                        <div class="auth-redirect">
+                            <h3>🔐 Autorización Requerida</h3>
+                            <p style="margin: 15px 0;">
+                                Necesitas autorizar el pago en tu wallet.
+                            </p>
+                            <a href="${data.authUrl}" target="_blank" class="btn btn-primary" style="display: inline-block; text-decoration: none;">
+                                Ir a Autorizar →
+                            </a>
+                            <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                                Serás redirigido a tu wallet para completar la autorización
+                            </p>
+                        </div>
+                    `;
+                    break;
+                
+                case 'success':
+                    content.innerHTML = `
+                        <div class="success-message">
+                            <h3>✅ ¡Pago Completado!</h3>
+                            <p style="margin: 15px 0;">
+                                Tu entrada para <strong>${currentPaymentData.eventName}</strong> ha sido comprada exitosamente.
+                            </p>
+                            <div style="background: rgba(255,255,255,0.8); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                                <p style="color: #333; margin-bottom: 10px;">ID de Pago:</p>
+                                <code style="font-size: 0.9em;">${data.paymentId}</code>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="closePaymentModal()">
+                            Cerrar
+                        </button>
+                    `;
+                    break;
+                
+                case 'error':
+                    content.innerHTML = `
+                        <div class="error-message">
+                            <h3>❌ Error en el Pago</h3>
+                            <p style="margin: 15px 0;">
+                                ${data.message || 'Ocurrió un error procesando tu pago'}
+                            </p>
+                        </div>
+                        <button class="btn btn-primary" onclick="closePaymentModal()">
+                            Cerrar
+                        </button>
+                    `;
+                    break;
+            }
+        }
 
+        // Confirmar pago
+        async function confirmPayment() {
+            const btn = document.getElementById('confirmBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '⏳ Procesando...';
+            }
+            
+            await createPayment();
+        }
+
+        // Crear pago
+        async function createPayment() {
             try {
-                // TODO: IMPLEMENTAR LLAMADAS REALES A OPEN PAYMENTS API
+                updateModalContent('processing', { message: 'Creando solicitud de pago...' });
                 
-                /* EJEMPLO DE LO QUE DEBES HACER:
-                
-                1. Crear Incoming Payment en el wallet del merchant:
-                const incomingPayment = await createIncomingPayment(
-                    currentPaymentData.merchantWallet,
-                    currentPaymentData.price,
-                    `Entrada para ${currentPaymentData.eventName}`
-                );
-                
-                2. Crear Outgoing Payment en el wallet del cliente:
-                const outgoingPayment = await createOutgoingPayment(
-                    currentPaymentData.clientWallet,
-                    incomingPayment.receiver,
-                    currentPaymentData.price
-                );
-                
-                3. Monitorear el estado del pago hasta que se complete
-                
-                4. Generar enlace de acceso al evento
-                */
-
-                // SIMULACIÓN (REEMPLAZAR CON CÓDIGO REAL)
-                await simulatePaymentProcess();
-                
-                // Generar enlace de acceso simulado
-                const accessLink = generateAccessLink(
-                    currentPaymentData.eventId, 
-                    'payment_' + Date.now()
-                );
-                
-                // Mostrar resultado exitoso
-                showPaymentSuccess(accessLink);
-
-            } catch (error) {
-                console.error('Error procesando pago:', error);
-                alert('❌ Error procesando el pago: ' + error.message);
-                
-                // Restaurar botón
-                button.textContent = '🚀 Confirmar Pago';
-                button.classList.remove('loading-btn');
-                button.disabled = false;
-            }
-        }
-
-        // Simulación del proceso de pago (REEMPLAZAR con Open Payments real)
-        async function simulatePaymentProcess() {
-            // Simular tiempo de procesamiento
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            
-            // En la implementación real aquí irían las llamadas a:
-            // 1. POST /incoming-payments (merchant wallet)
-            // 2. POST /outgoing-payments (client wallet) 
-            // 3. GET /outgoing-payments/{id} (verificar estado)
-            
-            console.log('💡 IMPLEMENTAR AQUÍ: Llamadas reales a Open Payments API');
-        }
-
-        function showPaymentSuccess(accessLink) {
-            // Ocultar botón de confirmar
-            document.getElementById('confirmPaymentBtn').style.display = 'none';
-            
-            // Mostrar información de acceso
-            const statusDiv = document.getElementById('paymentStatus');
-            const linkDiv = document.getElementById('eventAccessLink');
-            
-            linkDiv.textContent = accessLink;
-            statusDiv.style.display = 'block';
-        }
-
-        function generateAccessLink(eventId, paymentId) {
-            const token = 'access_' + Math.random().toString(36).substr(2, 15);
-            const expires = Date.now() + (24 * 60 * 60 * 1000); // 24 horas
-            
-            // En producción, este enlace debe guardarse en tu base de datos
-            return `https://eventos.tudominio.com/join/${eventId}?token=${token}&payment=${paymentId}&expires=${expires}`;
-        }
-
-        // Funciones reales que necesitas implementar con Open Payments
-        
-        /**
-         * FUNCIÓN 1: Crear Incoming Payment (Lado del Merchant)
-         * Esta función debe llamar a la API de Open Payments del merchant
-         */
-        async function createIncomingPayment(merchantWallet, amount, description) {
-            const response = await fetch(`${merchantWallet}/incoming-payments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getMerchantToken(merchantWallet)}` // Token del merchant
-                },
-                body: JSON.stringify({
-                    walletAddress: merchantWallet,
-                    incomingAmount: {
-                        value: (amount * 100).toString(), // Convertir a centavos
-                        assetCode: 'USD',
-                        assetScale: 2
-                    },
-                    description: description,
-                    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutos
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error creando incoming payment: ${response.status}`);
-            }
-
-            return await response.json();
-        }
-
-        /**
-         * FUNCIÓN 2: Crear Outgoing Payment (Lado del Cliente)
-         * Esta función debe llamar a la API de Open Payments del cliente
-         */
-        async function createOutgoingPayment(clientWallet, incomingPaymentUrl, amount) {
-            const response = await fetch(`${clientWallet}/outgoing-payments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getClientToken(clientWallet)}` // Token del cliente
-                },
-                body: JSON.stringify({
-                    walletAddress: clientWallet,
-                    receiver: incomingPaymentUrl, // URL del incoming payment creado
-                    sendAmount: {
-                        value: (amount * 100).toString(),
-                        assetCode: 'USD',
-                        assetScale: 2
-                    }
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error creando outgoing payment: ${response.status}`);
-            }
-
-            return await response.json();
-        }
-
-        /**
-         * FUNCIÓN 3: Verificar Estado del Pago
-         * Monitorea el progreso del pago hasta completarse
-         */
-        async function monitorPaymentStatus(clientWallet, outgoingPaymentId) {
-            const maxAttempts = 30; // 30 intentos máximo
-            let attempts = 0;
-
-            while (attempts < maxAttempts) {
-                const response = await fetch(`${clientWallet}/outgoing-payments/${outgoingPaymentId}`, {
+                const response = await fetch(`${API_URL}/api/marketplace/create-payment`, {
+                    method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${getClientToken(clientWallet)}`
-                    }
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(currentPaymentData)
                 });
 
-                const payment = await response.json();
+                const result = await response.json();
                 
-                console.log(`Estado del pago: ${payment.state}`);
-                
-                if (payment.state === 'COMPLETED') {
-                    return { success: true, payment };
-                } else if (payment.state === 'FAILED') {
-                    throw new Error('El pago falló');
+                if (!response.ok) {
+                    throw new Error(result.error || 'Error creando pago');
                 }
 
-                // Esperar 2 segundos antes del siguiente intento
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                attempts++;
-            }
-
-            throw new Error('Timeout: El pago no se completó en el tiempo esperado');
-        }
-
-        /**
-         * FUNCIÓN 4: Obtener Tokens de Acceso
-         * Necesitas implementar la autenticación para obtener tokens
-         */
-        function getMerchantToken(merchantWallet) {
-            // TODO: Implementar autenticación real
-            // En producción, estos tokens deben obtenerse a través de OAuth 2.0
-            const tokens = {
-                'https://wallet.interledger-test.dev/jazz-merchant': 'MERCHANT_TOKEN_1',
-                'https://wallet.interledger-test.dev/blockchain-events': 'MERCHANT_TOKEN_2',
-                'https://wallet.interledger-test.dev/creative-studio': 'MERCHANT_TOKEN_3'
-            };
-            
-            return tokens[merchantWallet] || 'DEFAULT_MERCHANT_TOKEN';
-        }
-
-        function getClientToken(clientWallet) {
-            // TODO: Implementar autenticación real del cliente
-            // El cliente debe proporcionar su token o autenticarse
-            return 'CLIENT_ACCESS_TOKEN';
-        }
-
-        /**
-         * FUNCIÓN 5: Procesar Pago Completo (Versión Real)
-         * Esta es la función completa que reemplazaría a simulatePaymentProcess()
-         */
-        async function processRealPayment() {
-            try {
-                console.log('🚀 Iniciando pago con Open Payments...');
-                
-                // Paso 1: Crear incoming payment en el wallet del merchant
-                const incomingPayment = await createIncomingPayment(
-                    currentPaymentData.merchantWallet,
-                    currentPaymentData.price,
-                    `Entrada para ${currentPaymentData.eventName}`
-                );
-                
-                console.log('✅ Incoming payment creado:', incomingPayment.id);
-                
-                // Paso 2: Crear outgoing payment en el wallet del cliente
-                const outgoingPayment = await createOutgoingPayment(
-                    currentPaymentData.clientWallet,
-                    incomingPayment.receiver, // URL del incoming payment
-                    currentPaymentData.price
-                );
-                
-                console.log('✅ Outgoing payment creado:', outgoingPayment.id);
-                
-                // Paso 3: Monitorear el estado del pago
-                const result = await monitorPaymentStatus(
-                    currentPaymentData.clientWallet,
-                    outgoingPayment.id
-                );
-                
-                console.log('✅ Pago completado exitosamente');
-                
-                // Paso 4: Registrar la transacción en tu base de datos
-                await recordTransaction({
-                    eventId: currentPaymentData.eventId,
-                    clientWallet: currentPaymentData.clientWallet,
-                    merchantWallet: currentPaymentData.merchantWallet,
-                    amount: currentPaymentData.price,
-                    incomingPaymentId: incomingPayment.id,
-                    outgoingPaymentId: outgoingPayment.id,
-                    status: 'completed',
-                    timestamp: new Date().toISOString()
-                });
-                
-                return result;
+                if (result.requiresAuth) {
+                    // Necesita autorización
+                    updateModalContent('auth', { authUrl: result.authUrl });
+                    
+                    // Guardar datos para completar después
+                    localStorage.setItem('pendingPayment', JSON.stringify({
+                        paymentId: result.paymentId,
+                        ...currentPaymentData
+                    }));
+                    
+                    // Abrir URL de autorización en nueva pestaña
+                    window.open(result.authUrl, '_blank');
+                    
+                } else if (result.success) {
+                    // Pago completado directamente
+                    updateModalContent('success', { paymentId: result.paymentId });
+                } else {
+                    throw new Error('Estado inesperado del pago');
+                }
                 
             } catch (error) {
-                console.error('❌ Error en proceso de pago:', error);
-                throw error;
+                console.error('Error en pago:', error);
+                updateModalContent('error', { message: error.message });
             }
         }
 
-        /**
-         * FUNCIÓN 6: Registrar Transacción en Base de Datos
-         * Guarda la información del pago para futuras referencias
-         */
-        async function recordTransaction(transactionData) {
-            // TODO: Implementar llamada a tu API backend
-            const response = await fetch('/api/transactions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(transactionData)
-            });
+        // Verificar si hay un pago pendiente al cargar la página
+        async function checkPendingPayment() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const interactRef = urlParams.get('interact_ref');
             
-            if (!response.ok) {
-                console.warn('⚠️ Error guardando transacción en base de datos');
-            }
-        }
-
-        /**
-         * FUNCIÓN 7: Configurar Webhooks (Opcional pero Recomendado)
-         * Para recibir notificaciones automáticas de Open Payments
-         */
-        function setupWebhooks() {
-            // Los webhooks te permiten recibir notificaciones automáticas
-            // cuando cambia el estado de los pagos
-            
-            // Configuración ejemplo para webhook:
-            const webhookConfig = {
-                url: 'https://tudominio.com/webhooks/open-payments',
-                events: [
-                    'incoming_payment.completed',
-                    'outgoing_payment.completed',
-                    'outgoing_payment.failed'
-                ]
-            };
-            
-            // En tu servidor, necesitas un endpoint que maneje estos webhooks:
-            /*
-            app.post('/webhooks/open-payments', (req, res) => {
-                const event = req.body;
+            if (interactRef) {
+                // Hay un callback de autorización
+                const pendingPayment = localStorage.getItem('pendingPayment');
                 
-                switch(event.type) {
-                    case 'outgoing_payment.completed':
-                        // El pago se completó, generar acceso al evento
-                        generateEventAccess(event.data.id);
-                        break;
-                    case 'outgoing_payment.failed':
-                        // El pago falló, notificar al usuario
-                        notifyPaymentFailed(event.data.id);
-                        break;
+                if (pendingPayment) {
+                    const paymentData = JSON.parse(pendingPayment);
+                    currentPaymentData = paymentData;
+                    
+                    showPaymentModal();
+                    updateModalContent('processing', { message: 'Completando pago autorizado...' });
+                    
+                    try {
+                        const response = await fetch(`${API_URL}/api/marketplace/complete-payment`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                paymentId: paymentData.paymentId,
+                                interact_ref: interactRef
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            updateModalContent('success', { 
+                                paymentId: paymentData.paymentId,
+                                accessUrl: result.accessUrl 
+                            });
+                            localStorage.removeItem('pendingPayment');
+                        } else {
+                            throw new Error(result.error || 'Error completando pago');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error completando pago:', error);
+                        updateModalContent('error', { message: error.message });
+                    }
                 }
                 
-                res.status(200).send('OK');
-            });
-            */
+                // Limpiar URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         }
 
-        // Inicializar la aplicación
+        // Inicializar aplicación
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎫 PayLink Marketplace cargado');
-            console.log('📋 Para implementar:');
-            console.log('   1. Configurar autenticación con Open Payments');
-            console.log('   2. Implementar createIncomingPayment()');
-            console.log('   3. Implementar createOutgoingPayment()');
-            console.log('   4. Configurar webhooks');
-            console.log('   5. Crear base de datos para transacciones');
-            console.log('   6. Implementar generación de enlaces de acceso');
+            console.log('🎫 PayLink Marketplace iniciado');
+            checkAPIStatus();
+            checkPendingPayment();
             
-            // Cargar wallet por defecto para demo
-            document.getElementById('clientWallet').value = 'https://wallet.interledger-test.dev/alice';
+            // Verificar estado cada 30 segundos
+            setInterval(checkAPIStatus, 30000);
         });
 
-        // Función para copiar enlace de acceso
-        function copyAccessLink() {
-            const linkElement = document.getElementById('eventAccessLink');
-            navigator.clipboard.writeText(linkElement.textContent).then(() => {
-                alert('🔗 Enlace copiado al portapapeles');
-            });
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('paymentModal');
+            if (event.target === modal) {
+                closePaymentModal();
+            }
         }
-
-        // Agregar botón de copiar al enlace de acceso
-        document.addEventListener('DOMContentLoaded', function() {
-            const accessLinkDiv = document.getElementById('eventAccessLink');
-            accessLinkDiv.addEventListener('click', copyAccessLink);
-            accessLinkDiv.style.cursor = 'pointer';
-            accessLinkDiv.title = 'Clic para copiar';
-        });
     </script>
-
-    <!-- Información adicional sobre la implementación -->
-    <div style="position: fixed; bottom: 20px; right: 20px; background: rgba(102, 126, 234, 0.9); color: white; padding: 15px 20px; border-radius: 12px; font-size: 14px; max-width: 300px; backdrop-filter: blur(10px);">
-        <div style="font-weight: bold; margin-bottom: 8px;">🚀 Estado de Desarrollo</div>
-        <div style="margin-bottom: 5px;">✅ UI Completa</div>
-        <div style="margin-bottom: 5px;">⚠️ Implementar Open Payments API</div>
-        <div style="margin-bottom: 5px;">⚠️ Configurar Autenticación</div>
-        <div>⚠️ Base de Datos para Accesos</div>
-    </div>
 </body>
 </html>
-                
