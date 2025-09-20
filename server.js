@@ -24,9 +24,10 @@ app.use(express.static('public'))
 const config = {
   port: process.env.PORT || 3002,
   // Merchant wallet (recibe los pagos)
-  walletAddressUrl: process.env.WALLET_ADDRESS_URL || 'https://ilp.interledger-test.dev/carterah',
+  walletAddressClient: process.env.WALLET_ADDRESS_CLIENT || 'https://ilp.interledger-test.dev/b-e',
+  walletAddressUrl: process.env.WALLET_ADDRESS_URL || 'https://ilp.interledger-test.dev/gio',
   privateKeyPath: process.env.PRIVATE_KEY_PATH || './private.key',
-  keyId: process.env.KEY_ID || '67b0ec64-9d43-4f9d-bd94-eddaaedc75fe',
+  keyId: process.env.KEY_ID,
   appUrl: process.env.APP_URL || 'http://localhost:3002',
   // Cliente wallet por defecto (para demo)
   defaultClientWallet: 'https://ilp.interledger-test.dev/b-e'
@@ -42,48 +43,29 @@ let authenticatedClient = null
 async function initializeClient() {
   try {
     console.log('🔧 Inicializando cliente autenticado Open Payments...')
-    
+
     // Leer la clave privada
-    let privateKey = process.env.PRIVATE_KEY || process.env.PRIVATE_KEY_PATH
-    
-    // Si es un path, leer el archivo
-    if (privateKey && !privateKey.includes('BEGIN') && fs.existsSync(privateKey)) {
-      privateKey = fs.readFileSync(privateKey, 'utf8')
-    }
-    
-    // Limpiar la clave de comillas y espacios extra
-    if (privateKey) {
-      privateKey = privateKey.replace(/^"|"$/g, '').trim()
-    }
-    
-    // Si la clave no tiene headers, agregarlos
-    if (privateKey && !privateKey.includes('BEGIN')) {
-      privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`
-    }
-    
-    if (!privateKey) {
-      throw new Error('Private key no encontrada. Verifica PRIVATE_KEY o PRIVATE_KEY_PATH en .env')
-    }
-    
+    let privateKey = process.env.PRIVATE_KEY_PATH
+
+
+
     console.log('🔍 Private key cargada, longitud:', privateKey.length)
     console.log('🔍 Comienza con BEGIN:', privateKey.includes('BEGIN PRIVATE KEY'))
-    
+
     authenticatedClient = await createAuthenticatedClient({
-      walletAddressUrl: config.walletAddressUrl,
-      privateKey: privateKey.trim(),
+      walletAddressUrl: config.walletAddressClient,
+      privateKey: 'private.key',
       keyId: config.keyId,
-      validateResponses: false,
-      requestTimeoutMs: 60000
     })
-    
+
     console.log('✅ Cliente autenticado inicializado correctamente')
     console.log('🔑 Key ID:', config.keyId)
     console.log('🏪 Merchant Wallet (recibe pagos):', config.walletAddressUrl)
     console.log('👤 Cliente Wallet (por defecto):', config.defaultClientWallet)
     console.log('')
-    
+    console.log("cleine inicializado", authenticatedClient)
     return true
-    
+
   } catch (error) {
     console.error('❌ Error inicializando cliente:', error)
     console.error('Detalles:', error.message)
@@ -100,7 +82,7 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
   console.log('🔍 === INICIO CREATE PAYMENT ===')
   console.log('🔍 Body recibido:', JSON.stringify(req.body, null, 2))
   console.log('🔍 Cliente autenticado disponible:', !!authenticatedClient)
-  
+
   try {
     const {
       eventId,
@@ -109,14 +91,14 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
       clientWalletAddress,
       merchantId
     } = req.body
-    
-    console.log('🎫 Nueva solicitud de pago:', { 
-      eventId, 
-      eventName, 
+
+    console.log('🎫 Nueva solicitud de pago:', {
+      eventId,
+      eventName,
       amount,
-      clientWallet: clientWalletAddress 
+      clientWallet: clientWalletAddress
     })
-    
+
     if (!authenticatedClient) {
       console.log('❌ Cliente no inicializado')
       return res.status(503).json({
@@ -124,7 +106,7 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
         error: 'Servicio no disponible - Cliente no inicializado'
       })
     }
-    
+
     // Validar inputs
     if (!eventId || !eventName || !amount || !clientWalletAddress) {
       console.log('❌ Campos faltantes:', { eventId: !!eventId, eventName: !!eventName, amount: !!amount, clientWalletAddress: !!clientWalletAddress })
@@ -133,55 +115,77 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
         error: 'Faltan campos requeridos'
       })
     }
-    
+
     // Para demo, usar el merchant wallet configurado en .env
     const merchantWalletUrl = config.walletAddressUrl
-    
+
     console.log('🏪 Merchant wallet:', merchantWalletUrl)
     console.log('👤 Cliente wallet:', clientWalletAddress)
-    
+
     // Validar que no sean el mismo wallet
     if (clientWalletAddress === merchantWalletUrl) {
       throw new Error('Cliente y Merchant no pueden usar el mismo wallet')
     }
-    
+
     // Paso 1: Resolver wallet addresses
     console.log('📍 Resolviendo wallet addresses...')
     console.log('   Cliente:', clientWalletAddress)
     console.log('   Merchant:', merchantWalletUrl)
-    
+
     let senderWalletAddress, receiverWalletAddress
-    
+
     try {
       console.log('🔍 Resolviendo sender wallet...')
       senderWalletAddress = await authenticatedClient.walletAddress.get({ url: clientWalletAddress })
       console.log('✅ Sender wallet resuelto:', senderWalletAddress.id)
-      
-      console.log('🔍 Resolviendo receiver wallet...')  
+
+      console.log('🔍 Resolviendo receiver wallet...')
       receiverWalletAddress = await authenticatedClient.walletAddress.get({ url: merchantWalletUrl })
       console.log('✅ Receiver wallet resuelto:', receiverWalletAddress.id)
     } catch (walletError) {
       console.error('❌ Error resolviendo wallets:', walletError.message)
       throw new Error(`Error resolviendo wallet addresses: ${walletError.message}`)
     }
-    
+
     console.log('✅ Wallets resueltos')
-    
+
     // Paso 2: Crear incoming payment en el merchant wallet
     console.log('💰 Creando incoming payment...')
     console.log('🔍 Receiver resource server:', receiverWalletAddress.resourceServer)
     console.log('🔍 Asset info:', { code: receiverWalletAddress.assetCode, scale: receiverWalletAddress.assetScale })
-    
+
     // Convertir USD a MXN aproximadamente (1 USD = 18 MXN aprox)
     let finalAmount = amount
-    if (receiverWalletAddress.assetCode === 'MXN') {
-      finalAmount = amount * 18 // Conversión aproximada USD a MXN
-      console.log('🔍 Conversión USD->MXN:', amount, 'USD =', finalAmount, 'MXN')
-    }
-    
+
     const amountValue = Math.round(finalAmount * Math.pow(10, receiverWalletAddress.assetScale))
     console.log('🔍 Monto final a cobrar:', amountValue, 'centavos de', receiverWalletAddress.assetCode)
-    
+    //falta icomingpaymentgrand 
+    const incomingPaymentGrant = await client.grant.request(
+      {
+        url: receiverWalletAddress.authServer
+      },
+      {
+        access_token: {
+          access: [
+            {
+              type: 'incoming-payment',
+              actions: ['read', 'complete', 'create']
+            }
+          ]
+        }
+      }
+    )
+
+    console.log(
+      '\nStep 2: got incoming payment grant for receiving wallet address',
+      incomingPaymentGrant
+    )
+
+    if (!isFinalizedGrant(incomingPaymentGrant)) {
+      throw new Error('Expected finalized incoming payment grant')
+    }
+
+
     let incomingPayment
     try {
       incomingPayment = await authenticatedClient.incomingPayment.create(
@@ -189,7 +193,9 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
           url: receiverWalletAddress.resourceServer
         },
         {
-          walletAddress: merchantWalletUrl,
+
+
+          walletAddress: receiverWalletAddress.id,
           incomingAmount: {
             assetCode: receiverWalletAddress.assetCode,
             assetScale: receiverWalletAddress.assetScale,
@@ -209,20 +215,43 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
     } catch (incomingError) {
       console.error('❌ Error creando incoming payment:', incomingError.message)
       console.error('❌ Stack completo:', incomingError.stack)
-      
+
       // Log más detalles del error si están disponibles
       if (incomingError.response) {
         console.error('❌ Response status:', incomingError.response.status)
         console.error('❌ Response data:', incomingError.response.data)
       }
-      
+
       throw new Error(`Error creando incoming payment: ${incomingError.message}`)
     }
-    
+
     // Paso 3: Crear quote
     console.log('📊 Creando quote...')
     console.log('🔍 Sender resource server:', senderWalletAddress.resourceServer)
-    
+
+
+    //  peer/index.js
+    const quoteGrant = await client.grant.request(
+      {
+        url: senderWalletAddress.authServer
+      },
+      {
+        access_token: {
+          access: [
+            {
+              type: 'quote',
+              actions: ['create', 'read']
+            }
+          ]
+        }
+      }
+    )
+
+    if (!isFinalizedGrant(quoteGrant)) {
+      throw new Error('Expected finalized quote grant')
+    }
+
+
     let quote
     try {
       quote = await authenticatedClient.quote.create(
@@ -242,11 +271,11 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
       console.error('❌ Error creando quote:', quoteError.message)
       throw new Error(`Error creando quote: ${quoteError.message}`)
     }
-    
+
     // Paso 4: Solicitar grant con interacción para outgoing payment
     console.log('🔐 Solicitando autorización interactiva...')
     console.log('🔍 Sender auth server:', senderWalletAddress.authServer)
-    
+
     let grant
     try {
       grant = await authenticatedClient.grant.request(
@@ -277,10 +306,10 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
       console.error('❌ Error solicitando grant:', grantError.message)
       throw new Error(`Error solicitando autorización: ${grantError.message}`)
     }
-    
+
     // Guardar información del pago
     const paymentId = `payment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    
+
     paymentStore.set(paymentId, {
       paymentId,
       eventId,
@@ -297,13 +326,13 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
       status: 'pending_authorization',
       createdAt: new Date().toISOString()
     })
-    
+
     console.log('💾 Pago guardado con ID:', paymentId)
-    
+
     // Si requiere interacción (siempre en este caso)
     if (grant.interact) {
       console.log('🔗 Autorización requerida:', grant.interact.redirect)
-      
+
       return res.json({
         success: true,
         requiresAuth: true,
@@ -312,7 +341,7 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
         message: 'Redirigiendo para autorización...'
       })
     }
-    
+
     // Si ya tenemos el token (raro pero posible)
     if (grant.access_token) {
       const result = await completePaymentWithGrant(
@@ -321,19 +350,19 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
         senderWalletAddress,
         quote.id
       )
-      
+
       return res.json(result)
     }
-    
+
   } catch (error) {
     console.error('❌ ERROR DETALLADO EN CREATE-PAYMENT:')
     console.error('   Mensaje:', error.message)
     console.error('   Stack:', error.stack)
     console.error('   Tipo:', error.constructor.name)
-    
+
     // Error más específico
     let errorMessage = 'Error procesando el pago'
-    
+
     if (error.message?.includes('wallet address')) {
       errorMessage = 'Wallet address inválida o no encontrada'
     } else if (error.message?.includes('unauthorized') || error.message?.includes('authentication')) {
@@ -345,7 +374,7 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
     } else if (error.message) {
       errorMessage = error.message
     }
-    
+
     res.status(500).json({
       success: false,
       error: errorMessage,
@@ -358,9 +387,9 @@ app.post('/api/marketplace/create-payment', async (req, res) => {
 app.post('/api/marketplace/complete-payment', async (req, res) => {
   try {
     const { paymentId, interact_ref } = req.body
-    
+
     console.log('🔄 Completando pago:', { paymentId, interact_ref })
-    
+
     const paymentData = paymentStore.get(paymentId)
     if (!paymentData) {
       return res.status(404).json({
@@ -368,10 +397,10 @@ app.post('/api/marketplace/complete-payment', async (req, res) => {
         error: 'Pago no encontrado'
       })
     }
-    
+
     // Continuar el grant con el interact_ref
     console.log('🔄 Continuando grant...')
-    
+
     const continuedGrant = await authenticatedClient.grant.continue(
       {
         url: paymentData.grant.continue.uri,
@@ -379,16 +408,16 @@ app.post('/api/marketplace/complete-payment', async (req, res) => {
       },
       { interact_ref }
     )
-    
+
     console.log('✅ Grant continuado:', continuedGrant)
-    
+
     if (!continuedGrant.access_token) {
       return res.status(400).json({
         success: false,
         error: 'No se obtuvo token de acceso después de la autorización'
       })
     }
-    
+
     // Crear el outgoing payment
     const result = await completePaymentWithGrant(
       paymentId,
@@ -396,9 +425,9 @@ app.post('/api/marketplace/complete-payment', async (req, res) => {
       paymentData.senderWalletAddress,
       paymentData.quoteId
     )
-    
+
     res.json(result)
-    
+
   } catch (error) {
     console.error('❌ Error completando pago:', error)
     res.status(500).json({
@@ -412,9 +441,9 @@ app.post('/api/marketplace/complete-payment', async (req, res) => {
 async function completePaymentWithGrant(paymentId, accessToken, senderWalletAddress, quoteId) {
   try {
     const paymentData = paymentStore.get(paymentId)
-    
+
     console.log('💸 Creando outgoing payment...')
-    
+
     const outgoingPayment = await authenticatedClient.outgoingPayment.create(
       {
         url: senderWalletAddress.resourceServer,
@@ -430,36 +459,36 @@ async function completePaymentWithGrant(paymentId, accessToken, senderWalletAddr
         }
       }
     )
-    
+
     console.log('✅ Outgoing payment creado:', outgoingPayment.id)
     console.log('   Estado:', outgoingPayment.state)
-    
+
     // Actualizar estado del pago
     paymentData.status = 'completed'
     paymentData.outgoingPaymentId = outgoingPayment.id
     paymentData.completedAt = new Date().toISOString()
-    
+
     // Monitorear el estado del pago
     let finalState = outgoingPayment.state
     let attempts = 0
     const maxAttempts = 10
-    
+
     while (attempts < maxAttempts && finalState === 'FUNDING') {
       await new Promise(resolve => setTimeout(resolve, 2000))
-      
+
       const paymentStatus = await authenticatedClient.outgoingPayment.get({
         url: outgoingPayment.id,
         accessToken: accessToken
       })
-      
+
       finalState = paymentStatus.state
       console.log(`   Verificando estado (${attempts + 1}/${maxAttempts}): ${finalState}`)
       attempts++
     }
-    
+
     if (finalState === 'COMPLETED') {
       console.log('🎉 Pago completado exitosamente')
-      
+
       return {
         success: true,
         paymentId,
@@ -479,7 +508,7 @@ async function completePaymentWithGrant(paymentId, accessToken, senderWalletAddr
         message: `Pago en proceso (${finalState})`
       }
     }
-    
+
   } catch (error) {
     console.error('Error en completePaymentWithGrant:', error)
     throw error
@@ -490,7 +519,7 @@ async function completePaymentWithGrant(paymentId, accessToken, senderWalletAddr
 app.get('/api/marketplace/payment-status/:paymentId', async (req, res) => {
   try {
     const { paymentId } = req.params
-    
+
     const paymentData = paymentStore.get(paymentId)
     if (!paymentData) {
       return res.status(404).json({
@@ -498,7 +527,7 @@ app.get('/api/marketplace/payment-status/:paymentId', async (req, res) => {
         error: 'Pago no encontrado'
       })
     }
-    
+
     res.json({
       success: true,
       payment: {
@@ -511,7 +540,7 @@ app.get('/api/marketplace/payment-status/:paymentId', async (req, res) => {
         completedAt: paymentData.completedAt
       }
     })
-    
+
   } catch (error) {
     console.error('❌ Error obteniendo estado:', error)
     res.status(500).json({
@@ -525,13 +554,13 @@ app.get('/api/marketplace/payment-status/:paymentId', async (req, res) => {
 app.get('/health', async (req, res) => {
   let walletTest = null
   let clientStatus = 'no_initialized'
-  
+
   if (authenticatedClient) {
     clientStatus = 'initialized'
     try {
       // Probar resolver nuestro propio wallet
-      walletTest = await authenticatedClient.walletAddress.get({ 
-        url: config.walletAddressUrl 
+      walletTest = await authenticatedClient.walletAddress.get({
+        url: config.walletAddressUrl
       })
       clientStatus = 'working'
     } catch (e) {
@@ -539,7 +568,7 @@ app.get('/health', async (req, res) => {
       walletTest = null
     }
   }
-  
+
   res.json({
     status: clientStatus === 'working' ? 'OK' : 'ERROR',
     services: {
@@ -585,8 +614,8 @@ app.get('/api/info', (req, res) => {
 
 // Funciones auxiliares
 function generateNonce() {
-  return Math.random().toString(36).substring(2, 15) + 
-         Math.random().toString(36).substring(2, 15)
+  return Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
 }
 
 // Inicialización del servidor
@@ -599,31 +628,31 @@ async function startServer() {
     console.log('   👤 Cliente Wallet (demo):', config.defaultClientWallet)
     console.log('   🔑 Key ID:', config.keyId)
     console.log('   🌐 App URL:', config.appUrl)
-    
+
     // Inicializar cliente autenticado
     const clientInitialized = await initializeClient()
-    
+
     if (!clientInitialized) {
       console.error('⚠️  Advertencia: Cliente no pudo ser inicializado')
       console.error('⚠️  Verifica tu private key y key ID')
     }
-    
+
     // Crear carpeta public si no existe
     const publicDir = path.join(__dirname, 'public')
     if (!fs.existsSync(publicDir)) {
       fs.mkdirSync(publicDir, { recursive: true })
       console.log('📁 Carpeta public creada')
     }
-    
+
     // Copiar index.html a public si existe en raíz
     const htmlSource = path.join(__dirname, 'index.html')
     const htmlDest = path.join(publicDir, 'index.html')
-    
+
     if (fs.existsSync(htmlSource)) {
       fs.copyFileSync(htmlSource, htmlDest)
       console.log('📄 index.html copiado a public/')
     }
-    
+
     // Iniciar servidor
     const server = app.listen(config.port, () => {
       console.log('\n═══════════════════════════════════════════')
@@ -633,7 +662,7 @@ async function startServer() {
       console.log(`📚 API Info: http://localhost:${config.port}/api/info`)
       console.log('═══════════════════════════════════════════\n')
     })
-    
+
     // Manejo de cierre graceful
     process.on('SIGTERM', () => {
       console.log('\n📛 Señal SIGTERM recibida, cerrando servidor...')
@@ -642,7 +671,7 @@ async function startServer() {
         process.exit(0)
       })
     })
-    
+
     process.on('SIGINT', () => {
       console.log('\n📛 Señal SIGINT recibida, cerrando servidor...')
       server.close(() => {
@@ -650,7 +679,7 @@ async function startServer() {
         process.exit(0)
       })
     })
-    
+
   } catch (error) {
     console.error('💥 Error fatal al iniciar:', error)
     process.exit(1)
